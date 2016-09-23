@@ -1,6 +1,8 @@
 $(document).ready(function(){
 	$(document).on('click', '.glyphicon-plus', addNewMember);
 	$(document).on('click', '.glyphicon-remove', removeMember);
+	$(document).on('click', '.glyphicon-chevron-up', moreBase);
+	$(document).on('click', '.glyphicon-chevron-down', lessBase);
 	$(document).on('keyup', 'input', goCalculate);
 	loadPartyType();
 });
@@ -10,6 +12,27 @@ function loadPartyType()
     $(partyType).each(function(index, value){
         $('<li><a href="#" onclick="setParty(' + index + ')">' + value.typeName + '</a></li>').appendTo('#party-type-menu');
     });
+}
+
+function moreBase()
+{
+    var thisRaw = $(this).closest('div.input-group').find('input');
+    var thisVal = eval(thisRaw.val());
+    if (thisVal == undefined) return;
+
+    thisRaw.val(thisVal + 1);
+    goCalculate();
+}
+
+function lessBase()
+{
+    var thisRaw = $(this).closest('div.input-group').find('input');
+    var thisVal = eval(thisRaw.val());
+    if (thisVal == undefined) return;
+    if (thisVal == 0) return;
+
+    thisRaw.val(thisVal - 1);
+    goCalculate();
 }
 
 function addNewMember()
