@@ -1,16 +1,18 @@
 var partyType = [];
 
 $(document).ready(function(){
-    $('#go-cal').click(goCalculate);
-	$('.glyphicon-plus').click(addNewMember);
+	$(document).on('click', '.glyphicon-plus', addNewMember);
 	$(document).on('click', '.glyphicon-remove', removeMember);
+	$(document).on('change', 'input', goCalculate);
 });
 
 function addNewMember()
 {
     // copy the last member
-    $('.row-data:last').clone().insertBefore($('#row-add'));
+    var thisRaw = $(this).closest('.row-data');
+    thisRaw.clone().insertAfter(thisRaw);
     reindex();
+    goCalculate();
 }
 
 function removeMember()
@@ -18,6 +20,7 @@ function removeMember()
     if ($('tr.row-data').length == 1) return;
     $(this).closest('tr.row-data').remove();
     reindex();
+    goCalculate();
 }
 
 function reindex()
@@ -48,11 +51,23 @@ function goCalculate()
     });
     if (totalBase <= 0) totalBase = members.length;
     pDonate = pDonate / totalBase;
+
+    var totalPay = donate;
     members.each(function(){
         var pBase = eval($(this).find('input.personal-base').val());
         var pDont = eval($(this).find('input.personal-donate').val());
         if (pBase == undefined) pBase = 1;
         if (pDont == undefined) pDont = 0;
-        $(this).find('input.cal-result').val(Math.round(pDonate * pBase + pDont));
+        var pay = Math.round(pDonate * pBase + pDont);
+        totalPay += pay;
+        $(this).find('input.cal-result').val(pay);
     });
+
+    if (totalPay != total)
+    {
+        // let the last one change...
+        var diff = total - totalPay;
+        var lastPay = eval(members.last().find('input.cal-result').val());
+        members.last().find('input.cal-result').val(lastPay + diff);
+    }
 }
